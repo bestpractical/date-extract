@@ -1,0 +1,30 @@
+Date::Glean - simple date extraction
+
+There are already a few modules for getting a date out of a string.
+DateTime::Format::Natural should be your first choice. There's also
+Time::ParseDate which fits some very specific formats. Finally, you can
+coerce Date::Manip to do your bidding.
+
+But I needed something that will take an arbitrary block of text, search it
+for something that looks like a date string, and build a DateTime object
+out of it. This module fills this niche. By design it will produce few false
+positives. This means it will not catch nearly everything that looks like a
+date string.
+
+INSTALLATION
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+MAJOR CHANGES
+
+0.00: none yet!
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2007 Best Practical Solutions
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
