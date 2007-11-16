@@ -1,12 +1,12 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 25;
-use Date::Extract;
+use Test::More tests => 48;
 use Test::MockTime 'set_fixed_time';
+use Date::Extract;
 
-# a Friday. The time I wrote this line of code, in fact
-set_fixed_time('2007-08-03T00:36:52Z');
+# a Friday. The time I wrote this line of code, in fact (in UTC)
+set_fixed_time('2007-08-03T05:36:52Z');
 
 my $parser = Date::Extract->new(prefer_future => 1);
 
@@ -15,24 +15,23 @@ sub extract_is {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
     my $dt = $parser->extract($in);
-    ok($dt, "got a result");
-    #is($dt->ymd, $expected, "extracts '$in' to $expected");
+    is($dt->ymd, $expected, "extracts '$in' to $expected");
+    is($dt->time_zone->name, 'America/New_York', "correct time zone");
 }
 
 # days relative to today {{{
 extract_is(today     => "2007-08-03");
 extract_is(tomorrow  => "2007-08-04");
 extract_is(yesterday => "2007-08-02");
-extract_is(tonight   => "2007-08-03");
 # }}}
 # days of the week {{{
-extract_is("saturday"  => "2007-08-05");
-extract_is("sunday"    => "2007-08-06");
-extract_is("monday"    => "2007-08-07");
-extract_is("tuesday"   => "2007-08-08");
-extract_is("wednesday" => "2007-08-09");
-extract_is("thursday"  => "2007-08-10");
-extract_is("friday"    => "2007-08-11");
+extract_is("saturday"  => "2007-08-04");
+extract_is("sunday"    => "2007-08-05");
+extract_is("monday"    => "2007-08-06");
+extract_is("tuesday"   => "2007-08-07");
+extract_is("wednesday" => "2007-08-08");
+extract_is("thursday"  => "2007-08-09");
+extract_is("friday"    => "2007-08-10");
 # }}}
 # "last" days of the week {{{
 extract_is("last friday"    => "2007-07-27");
