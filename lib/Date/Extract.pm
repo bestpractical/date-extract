@@ -18,12 +18,9 @@ our $VERSION = '0.00';
 =head1 SYNOPSIS
 
     my $parser = Date::Extract->new();
-    my $dt = $parser->extract_date($arbitrary_text);
-    if ($parser->success) {
-        return $dt->ymd;
-    } else {
-        die "no parse for $date_time";
-    }
+    my $dt = $parser->extract_date($arbitrary_text)
+        or die "No date found.";
+    return $dt->ymd;
 
 =head1 MOTIVATION
 
@@ -57,15 +54,15 @@ L<DateTime>.
 
 =item prefer_future
 
-If a bare weekday appears, setting this option will interpret it as the
-nearest such weekday in the future. This is the default.
+If (for example) a bare weekday appears, setting this option will interpret it
+as the nearest such weekday in the future. This is the default.
 
 Note that this means that, on a Friday, "Friday" will return the next Friday.
 
 =item prefer_past
 
-If a bare weekday appears, setting this option will interpret it as the
-nearest such weekday in the past.
+If (for example) a bare weekday appears, setting this option will interpret it
+as the nearest such weekday in the past.
 
 Note that this means that, on a Friday, "Friday" will return the previous
 Friday.
@@ -112,7 +109,6 @@ sub new {
     my $class = shift;
     my %args = (
         conflict => 'first',
-        success => undef,
         @_,
     );
 
@@ -134,8 +130,9 @@ sub new {
 =head2 extract_date text => C<DateTime>
 
 Takes an arbitrary amount of text and extracts one or more dates from it. The
-return value will always be a list of valid L<DateTime> objects. Be sure to
-check the C<success> method before using them, though.
+return value will be zero or more C<DateTime> objects. If called in scalar
+context, the first will be returned, even if the C<conflict> argument specifies
+multiple possible return values.
 
 See the documentation of C<new> for the configuration of this method.
 
@@ -145,23 +142,6 @@ You may reuse a parser for multiple calls to C<extract_date>.
 
 sub extract_date {
     my ($self, $text) = @_;
-    $self->{success} = 0;
-
-    my $best = DateTime->now;
-
-    return $best;
-}
-
-=head2 success => C<boolean>
-
-Returns whether or not the most recent C<extract_date> successfully extracted a
-date. This will be C<undef> if C<extract_date> has not been run at all yet.
-
-=cut
-
-sub success {
-    my ($self) = @_;
-    return $self->{success};
 }
 
 =head1 CAVEATS
