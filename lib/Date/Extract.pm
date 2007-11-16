@@ -2,7 +2,7 @@ package Date::Extract;
 use strict;
 use warnings;
 use DateTime::Format::Natural;
-use List::Util qw(min max);
+use List::Util 'reduce';
 use parent 'Class::Data::Inheritable';
 
 __PACKAGE__->mk_classdata($_) for qw/scalar_downgrade handlers regex/;
@@ -268,7 +268,7 @@ sub _build_scalar_downgrade {
 
     $self->scalar_downgrade({
         all      => 'first',
-        earliest => 'all_cron',
+        all_cron => 'earliest',
     });
 }
 
@@ -282,10 +282,10 @@ sub _build_handlers {
         },
         all      => sub { @_ },
 
-        earliest => sub { min @_ },
-        latest   => sub { max @_ },
-        first    => sub { $_[0] },
-        latest   => sub { $_[-1] },
+        earliest => sub { reduce { $a < $b ? $a : $b } @_ },
+        latest   => sub { reduce { $a > $b ? $a : $b } @_ },
+        first    => sub { $_[0]  },
+        last     => sub { $_[-1] },
     });
 }
 
