@@ -1,4 +1,4 @@
-Date::Glean - simple date extraction
+Date::Extract - simple date extraction
 
 There are already a few modules for getting a date out of a string.
 DateTime::Format::Natural should be your first choice. There's also

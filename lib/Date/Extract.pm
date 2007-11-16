@@ -1,11 +1,11 @@
-package Date::Glean;
+package Date::Extract;
 use strict;
 use warnings;
 use DateTime;
 
 =head1 NAME
 
-Date::Glean - simple date extraction
+Date::Extract - simple date extraction
 
 =head1 VERSION
 
@@ -17,8 +17,8 @@ our $VERSION = '0.00';
 
 =head1 SYNOPSIS
 
-    my $parser = Date::Glean->new();
-    my $dt = $parser->glean_date($arbitrary_text);
+    my $parser = Date::Extract->new();
+    my $dt = $parser->extract_date($arbitrary_text);
     if ($parser->success) {
         return $dt->ymd;
     } else {
@@ -40,7 +40,7 @@ date string.
 
 =head1 METHODS
 
-=head2 new PARAMHASH => C<Date::Glean>
+=head2 new PARAMHASH => C<Date::Extract>
 
 =head3 arguments
 
@@ -134,19 +134,19 @@ sub new
     return $self;
 }
 
-=head2 glean_date text => C<DateTime>
+=head2 extract_date text => C<DateTime>
 
-Takes an arbitrary amount of text and gleans one or more dates from it. The
+Takes an arbitrary amount of text and extracts one or more dates from it. The
 return value will always be a list of valid L<DateTime> objects. Be sure to
 check the C<success> method before using them, though.
 
 See the documentation of C<new> for the configuration of this method.
 
-You may reuse a parser for multiple calls to C<glean_date>.
+You may reuse a parser for multiple calls to C<extract_date>.
 
 =cut
 
-sub glean_date
+sub extract_date
 {
     my ($self, $text) = @_;
     $self->{success} = 0;
@@ -158,8 +158,8 @@ sub glean_date
 
 =head2 success => C<boolean>
 
-Returns whether or not the most recent C<glean_date> successfully gleaned a
-date. This will be C<undef> if C<glean_date> has not been run at all yet.
+Returns whether or not the most recent C<extract_date> successfully extracted a
+date. This will be C<undef> if C<extract_date> has not been run at all yet.
 
 =cut
 
@@ -187,8 +187,8 @@ Shawn M Moore, C<< <sartak at gmail.com> >>
 No known bugs at this point.
 
 Please report any bugs or feature requests to
-C<bug-date-glean at rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Date-Glean>.
+C<bug-date-extract at rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Date-Extract>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
@@ -196,7 +196,7 @@ your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Date::Glean
+    perldoc Date::Extract
 
 You can also look for information at:
 
@@ -204,19 +204,19 @@ You can also look for information at:
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Date-Glean>
+L<http://annocpan.org/dist/Date-Extract>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Date-Glean>
+L<http://cpanratings.perl.org/d/Date-Extract>
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Date-Glean>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Date-Extract>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Date-Glean>
+L<http://search.cpan.org/dist/Date-Extract>
 
 =back
 
@@ -234,5 +234,5 @@ under the same terms as Perl itself.
 
 =cut
 
-1; # End of Date::Glean
+1; # End of Date::Extract
 

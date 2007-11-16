@@ -2,8 +2,8 @@
 use inc::Module::Install;
 
 # Define metadata
-name           'Date-Glean';
-all_from       'lib/Date/Glean.pm';
+name           'Date-Extract';
+all_from       'lib/Date/Extract.pm';
 
 requires       'DateTime';
 
