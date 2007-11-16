@@ -2,6 +2,10 @@ package Date::Extract;
 use strict;
 use warnings;
 use DateTime;
+use List::Util qw(min max);
+use parent 'Class::Data::Inheritable';
+
+__PACKAGE__->mk_classdata($_) for qw/scalar_downgrade handlers regex/;
 
 sub _croak {
     require Carp;
@@ -56,6 +60,8 @@ AM).
 
 By default it will use the "floating" time zone. See the documentation for
 L<DateTime>.
+
+This controls both the input time zone and output time zone.
 
 =item prefers
 
@@ -122,6 +128,7 @@ sub new {
     my %args = (
         returns => 'first',
         prefers => 'nearest',
+        time_zone => 'Floating',
         @_,
     );
 
@@ -158,8 +165,9 @@ sub _combine_args {
     my $from = shift;
     my $to = shift;
 
-    $to->{prefers} ||= $from->{prefers};
-    $to->{returns} ||= $from->{returns};
+    $to->{prefers}   ||= $from->{prefers};
+    $to->{returns}   ||= $from->{returns};
+    $to->{time_zone} ||= $from->{time_zone};
 }
 
 =head2 extract text => C<DateTime>, ARGS
@@ -184,9 +192,132 @@ sub extract {
     my $text = shift;
     my %args = @_;
 
+    # combine the arguments of parser->new and this
     # don't do this if called as a class method
     $self->_combine_args($self, \%args)
         if ref($self);
+
+    # when in scalar context, downgrade
+    $args{returns} = $self->_downgrade($args{returns})
+        unless wantarray;
+
+    # do the work
+    my @ret = $self->_extract($text, %args);
+
+    # munge the output to match the desired return type
+    return $self->_handle($args{returns}, @ret);
+}
+
+# build the giant regex used for parsing. it has to be a single regex, so that
+# the order of matches is correct.
+sub _build_regex {
+    my $self = shift;
+
+    my $relative          = '(?:today|tonight|tonite|tomorrow|yesterday)';
+
+    my $long_weekday      = '(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)';
+    my $short_weekday     = '(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)';
+    my $weekday           = "(?:$long_weekday|$short_weekday)";
+
+    my $relative_weekday  = "(?:(?:next|previous|last)\\s*$weekday)";
+
+    my $long_month        = '(?:January|February|March|April|May|June|July|August|September|October|November|December)';
+    my $short_month       = '(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
+    my $month             = "(?:$long_month|$short_month)";
+
+    # 1 - 31
+    my $cardinal_monthday = "(?:[1-9]|[12][0-9]|3[01])";
+    my $monthday          = "(?:$cardinal_monthday(?:st|nd|rd|th)?)";
+
+    my $day_month         = "(?:$monthday\\s*$month)";
+    my $month_day         = "(?:$monthday\\s*$month)";
+    my $day_month_year    = "(?:(?:$day_month|$month_day)\\s*,\\s*\\d\\d\\d\\d)";
+
+    my $yyyymmdd          = "(?:\\d\\d\\d\\d[-/]\\d\\d[-/]\\d\\d)";
+    my $ddmmyy            = "(?:\\d\\d[-/]\\d\\d[-/]\\d\\d)";
+
+    my $other             = $self->_build_more_regex;
+    $other = "|$other"
+        if $other;
+
+    my $regex = qr{
+        \b(
+            $relative         # today
+          | $relative_weekday # last Friday
+          | $weekday          # Monday
+          | $day_month_year   # November 13th, 1986
+          | $day_month        # November 13th
+          | $month_day        # 13 Nov
+          | $yyyymmdd         # 1986/11/13
+          | $ddmmyy           # 11-13-86
+            $other            # anything from the subclass
+        )\b
+    }ix;
+
+    $self->regex($regex);
+}
+
+# this is to be used in subclasses for adding more stuff to the regex
+# for example, to add support for $foo_bar and $baz_quux, return
+# "$foo_bar|$baz_quux"
+sub _build_more_regex { '' }
+
+# build the list->scalar downgrade types
+sub _build_scalar_downgrade {
+    my $self = shift;
+
+    $self->scalar_downgrade({
+        all      => 'first',
+        earliest => 'all_cron',
+    });
+}
+
+# build the handlers that munge the list of dates to the desired order
+sub _build_handlers {
+    my $self = shift;
+
+    $self->handlers({
+        all_cron => sub {
+            sort { DateTime->compare_ignore_floating($a, $b) } @_
+        },
+        all      => sub { @_ },
+
+        earliest => sub { min @_ },
+        latest   => sub { max @_ },
+        first    => sub { $_[0] },
+        latest   => sub { $_[-1] },
+    });
+}
+
+# actually perform the scalar downgrade
+sub _downgrade {
+    my $self    = shift;
+    my $returns = shift;
+
+    my $downgrades = $self->scalar_downgrade || $self->_build_scalar_downgrade;
+    return $downgrades->{$returns} || $returns;
+}
+
+sub _handle {
+    my $self    = shift;
+    my $returns = shift;
+
+    my $handlers = $self->handlers || $self->_build_handlers;
+    my $handler = $handlers->{$returns};
+    return defined $handler ? $handler->(@_) : @_
+}
+
+sub _extract {
+    my $self = shift;
+    my $text = shift;
+    my %args = @_;
+
+    my $regex = $self->regex || $self->_build_regex;
+    my @ret = $text =~ /$regex/g;
+
+    # XXX: convert @ret to DateTime, using $args{prefer}
+
+    return @ret;
 }
 
 =head1 CAVEATS
