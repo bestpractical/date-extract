@@ -1,7 +1,7 @@
 package Date::Extract;
 use strict;
 use warnings;
-use DateTime;
+use DateTime::Format::Natural;
 use List::Util qw(min max);
 use parent 'Class::Data::Inheritable';
 
@@ -213,7 +213,7 @@ sub extract {
 sub _build_regex {
     my $self = shift;
 
-    my $relative          = '(?:today|tonight|tonite|tomorrow|yesterday)';
+    my $relative          = '(?:today|tomorrow|yesterday)';
 
     my $long_weekday      = '(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)';
     my $short_weekday     = '(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)';
@@ -313,9 +313,20 @@ sub _extract {
     my %args = @_;
 
     my $regex = $self->regex || $self->_build_regex;
-    my @ret = $text =~ /$regex/g;
+    my @gleaned = $text =~ /$regex/g;
 
-    # XXX: convert @ret to DateTime, using $args{prefer}
+    my %dtfn_args;
+    $dtfn_args{prefer_future} = 1
+        if $args{prefers} && $args{prefers} eq 'future';
+    $dtfn_args{time_zone} = $args{time_zone};
+
+    my $parser = DateTime::Format::Natural->new(%dtfn_args);
+    my @ret;
+    for (@gleaned) {
+        my $dt = $parser->parse_datetime($_);
+        push @ret, $dt->set_time_zone($args{time_zone})
+            if $parser->success;
+    }
 
     return @ret;
 }
