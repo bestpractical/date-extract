@@ -14,7 +14,7 @@ sub _croak {
 
 =head1 NAME
 
-Date::Extract - simple date extraction
+Date::Extract - extract probable dates from strings
 
 =head1 VERSION
 
@@ -42,7 +42,8 @@ But I needed something that will take an arbitrary block of text, search it
 for something that looks like a date string, and build a L<DateTime> object
 out of it. This module fills this niche. By design it will produce few false
 positives. This means it will not catch nearly everything that looks like a
-date string.
+date string. So if you have the string "do homework for class 2019" it won't
+return a L<DateTime> object with the year set to 2019.
 
 =head1 METHODS
 
@@ -138,13 +139,13 @@ sub new {
      && $args{returns} ne 'latest'
      && $args{returns} ne 'all'
      && $args{returns} ne 'all_cron') {
-        _croak "Invalid `returns` passed to constructor: expected 'first', 'last', earliest', 'latest', 'all', or 'all_cron'.";
+        _croak "Invalid `returns` passed to constructor: expected `first', `last', `earliest', `latest', `all', or `all_cron'.";
     }
 
     if ($args{prefers} ne 'nearest'
      && $args{prefers} ne 'past'
      && $args{prefers} ne 'future') {
-        _croak "Invalid `prefers` passed to constructor: expected 'first', 'last', earliest', 'latest', 'all', or 'all_cron'.";
+        _croak "Invalid `prefers` passed to constructor: expected `nearest', `past', or `future'.";
     }
 
     my $self = bless \%args, ref($class) || $class;
