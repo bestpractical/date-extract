@@ -108,11 +108,9 @@ Returns all dates found in the string, in chronological order.
 
 =cut
 
-sub new
-{
+sub new {
     my $class = shift;
-    my %args = 
-    (
+    my %args = (
         conflict => 'first',
         success => undef,
         @_,
@@ -123,8 +121,7 @@ sub new
      && $args{conflict} ne 'earliest'
      && $args{conflict} ne 'latest'
      && $args{conflict} ne 'all'
-     && $args{conflict} ne 'all_cron')
-    {
+     && $args{conflict} ne 'all_cron') {
         require Carp;
         Carp::croak "Invalid `conflict` passed to constructor: expected 'first', 'last', earliest', 'latest', 'all', or 'all_cron'.";
     }
@@ -146,8 +143,7 @@ You may reuse a parser for multiple calls to C<extract_date>.
 
 =cut
 
-sub extract_date
-{
+sub extract_date {
     my ($self, $text) = @_;
     $self->{success} = 0;
 
@@ -163,8 +159,7 @@ date. This will be C<undef> if C<extract_date> has not been run at all yet.
 
 =cut
 
-sub success
-{
+sub success {
     my ($self) = @_;
     return $self->{success};
 }

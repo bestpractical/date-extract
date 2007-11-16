@@ -9,8 +9,7 @@ ok($parser, "got a parser out of Date::Extract->new");
 ok($parser->isa("Date::Extract"), "new parser is a Date::Extract object");
 
 # conflict {{{
-for my $preference (qw/first last earliest latest all all_cron/)
-{
+for my $preference (qw/first last earliest latest all all_cron/) {
     $parser = Date::Extract->new(conflict => $preference);
     ok($parser, "got a parser out of Date::Extract->new(conflict => 'first')");
     ok($parser->isa("Date::Extract"), "new parser is a Date::Extract object");
@@ -23,8 +22,7 @@ like($@, qr/01-new\.t/, "invalid `conflict` error reported from caller's perspec
 
 # }}}
 # prefer_future, prefer_past {{{
-for my $prefer (qw/prefer_future prefer_past/)
-{
+for my $prefer (qw/prefer_future prefer_past/) {
     $parser = Date::Extract->new($prefer => 1);
     ok($parser, "got a parser out of Date::Extract->new($prefer => 1)");
     ok($parser->isa("Date::Extract"), "new parser is a Date::Extract object");
