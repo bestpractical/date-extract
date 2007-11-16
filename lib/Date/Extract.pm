@@ -3,6 +3,11 @@ use strict;
 use warnings;
 use DateTime;
 
+sub _croak {
+    require Carp;
+    Carp::croak @_;
+}
+
 =head1 NAME
 
 Date::Extract - simple date extraction
@@ -18,7 +23,7 @@ our $VERSION = '0.00';
 =head1 SYNOPSIS
 
     my $parser = Date::Extract->new();
-    my $dt = $parser->extract_date($arbitrary_text)
+    my $dt = $parser->extract($arbitrary_text)
         or die "No date found.";
     return $dt->ymd;
 
@@ -52,22 +57,29 @@ AM).
 By default it will use the "floating" time zone. See the documentation for
 L<DateTime>.
 
-=item prefer_future
+=item prefers
 
-If (for example) a bare weekday appears, setting this option will interpret it
-as the nearest such weekday in the future. This is the default.
+This argument decides what happens when an ambiguous date appears in the
+input. For example, "Friday" may refer to any number of Fridays. The valid
+options for this argument are:
 
-Note that this means that, on a Friday, "Friday" will return the next Friday.
+=over 4
 
-=item prefer_past
+=item nearest
 
-If (for example) a bare weekday appears, setting this option will interpret it
-as the nearest such weekday in the past.
+Prefer the nearest date. This is the default.
 
-Note that this means that, on a Friday, "Friday" will return the previous
-Friday.
+=item future
 
-=item conflict
+Prefer the closest future date.
+
+=item past
+
+Prefer the closest past date.
+
+=back
+
+=item returns
 
 If the text has multiple possible dates, then this argument determines which
 date will be returned. By default it's 'first'.
@@ -108,18 +120,24 @@ Returns all dates found in the string, in chronological order.
 sub new {
     my $class = shift;
     my %args = (
-        conflict => 'first',
+        returns => 'first',
+        prefers => 'nearest',
         @_,
     );
 
-    if ($args{conflict} ne 'first'
-     && $args{conflict} ne 'last'
-     && $args{conflict} ne 'earliest'
-     && $args{conflict} ne 'latest'
-     && $args{conflict} ne 'all'
-     && $args{conflict} ne 'all_cron') {
-        require Carp;
-        Carp::croak "Invalid `conflict` passed to constructor: expected 'first', 'last', earliest', 'latest', 'all', or 'all_cron'.";
+    if ($args{returns} ne 'first'
+     && $args{returns} ne 'last'
+     && $args{returns} ne 'earliest'
+     && $args{returns} ne 'latest'
+     && $args{returns} ne 'all'
+     && $args{returns} ne 'all_cron') {
+        _croak "Invalid `returns` passed to constructor: expected 'first', 'last', earliest', 'latest', 'all', or 'all_cron'.";
+    }
+
+    if ($args{prefers} ne 'nearest'
+     && $args{prefers} ne 'past'
+     && $args{prefers} ne 'future') {
+        _croak "Invalid `prefers` passed to constructor: expected 'first', 'last', earliest', 'latest', 'all', or 'all_cron'.";
     }
 
     my $self = bless \%args, ref($class) || $class;
@@ -127,21 +145,48 @@ sub new {
     return $self;
 }
 
-=head2 extract_date text => C<DateTime>
+=for subclasses
 
-Takes an arbitrary amount of text and extracts one or more dates from it. The
-return value will be zero or more C<DateTime> objects. If called in scalar
-context, the first will be returned, even if the C<conflict> argument specifies
-multiple possible return values.
-
-See the documentation of C<new> for the configuration of this method.
-
-You may reuse a parser for multiple calls to C<extract_date>.
+This method will combine the arguments of parser->new and extract. Modify the
+"to" hash directly.
 
 =cut
 
-sub extract_date {
-    my ($self, $text) = @_;
+sub _combine_args {
+    shift;
+
+    my $from = shift;
+    my $to = shift;
+
+    $to->{prefers} ||= $from->{prefers};
+    $to->{returns} ||= $from->{returns};
+}
+
+=head2 extract text => C<DateTime>, ARGS
+
+Takes an arbitrary amount of text and extracts one or more dates from it. The
+return value will be zero or more C<DateTime> objects. If called in scalar
+context, the first will be returned, even if the C<returns> argument specifies
+multiple possible return values.
+
+See the documentation of C<new> for the configuration of this method. Any
+arguments passed into this method will trump those from the parser.
+
+You may reuse a parser for multiple calls to C<extract>.
+
+You do not need to have an instantiated C<Date::Extract> object to call this
+method. Just C<< Date::Extract->extract($foo) >> will work.
+
+=cut
+
+sub extract {
+    my $self = shift;
+    my $text = shift;
+    my %args = @_;
+
+    # don't do this if called as a class method
+    $self->_combine_args($self, \%args)
+        if ref($self);
 }
 
 =head1 CAVEATS
