@@ -236,6 +236,7 @@ sub _build_regex {
 
     my $yyyymmdd          = "(?:\\d\\d\\d\\d[-/]\\d\\d[-/]\\d\\d)";
     my $ddmmyy            = "(?:\\d\\d[-/]\\d\\d[-/]\\d\\d)";
+    my $ddmmyyyy          = "(?:\\d\\d[-/]\\d\\d[-/]\\d\\d\\d\\d)";
 
     my $other             = $self->_build_more_regex;
     $other = "|$other"
@@ -251,6 +252,7 @@ sub _build_regex {
           | $month_day        # 13 Nov
           | $yyyymmdd         # 1986/11/13
           | $ddmmyy           # 11-13-86
+          | $ddmmyyyy         # 11-13-1986
             $other            # anything from the subclass
         )\b
     }ix;
