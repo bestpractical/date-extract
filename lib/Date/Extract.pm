@@ -18,11 +18,11 @@ Date::Extract - extract probable dates from strings
 
 =head1 VERSION
 
-Version 0.00 released ???
+Version 0.01 released 13 Dec 07
 
 =cut
 
-our $VERSION = '0.00';
+our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
@@ -82,7 +82,7 @@ Prefer the closest future date.
 
 =item past
 
-Prefer the closest past date.
+Prefer the closest past date. B<NOT YET SUPPORTED>.
 
 =back
 
@@ -171,11 +171,11 @@ sub _combine_args {
     $to->{time_zone} ||= $from->{time_zone};
 }
 
-=head2 extract text => C<DateTime>, ARGS
+=head2 extract, ARGS text => C<DateTime>s
 
 Takes an arbitrary amount of text and extracts one or more dates from it. The
 return value will be zero or more C<DateTime> objects. If called in scalar
-context, the first will be returned, even if the C<returns> argument specifies
+context, only one will be returned, even if the C<returns> argument specifies
 multiple possible return values.
 
 See the documentation of C<new> for the configuration of this method. Any

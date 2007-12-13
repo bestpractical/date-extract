@@ -2,7 +2,7 @@ NAME
     Date::Extract - extract probable dates from strings
 
 VERSION
-    Version 0.00 released ???
+    Version 0.01 released 13 Dec 07
 
 SYNOPSIS
         my $parser = Date::Extract->new();
@@ -49,7 +49,7 @@ METHODS
             Prefer the closest future date.
 
         past
-            Prefer the closest past date.
+            Prefer the closest past date. NOT YET SUPPORTED.
 
     returns
         If the text has multiple possible dates, then this argument
@@ -78,10 +78,10 @@ METHODS
         This method will combine the arguments of parser->new and extract.
         Modify the "to" hash directly.
 
-  extract text => "DateTime", ARGS
+  extract, ARGS text => "DateTime"s
         Takes an arbitrary amount of text and extracts one or more dates
         from it. The return value will be zero or more "DateTime" objects.
-        If called in scalar context, the first will be returned, even if the
+        If called in scalar context, only one will be returned, even if the
         "returns" argument specifies multiple possible return values.
 
         See the documentation of "new" for the configuration of this method.
@@ -92,6 +92,16 @@ METHODS
 
         You do not need to have an instantiated "Date::Extract" object to
         call this method. Just "Date::Extract->extract($foo)" will work.
+
+FORMATS HANDLED
+        today; tomorrow; yesterday
+        last Friday; next Monday; previous Sat
+        Monday; Mon
+        November 13th, 1986; Nov 13, 1986
+        November 13th; Nov 13
+        13 Nov; 13th November
+        1986/11/13; 1986-11-13
+        11-13-86; 11/13/1986
 
 CAVEATS
         This module is *intentionally* very simple. Surprises are *not*

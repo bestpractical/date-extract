@@ -8,8 +8,8 @@ all_from       'lib/Date/Extract.pm';
 requires       'List::Util';
 requires       'Carp';
 
-# this actually requires DTFN + a patch for timezone handling
-requires       'DateTime::Format::Natural' => '0.58';
+# 0.60 adds time zone handling
+requires       'DateTime::Format::Natural' => '0.60';
 
 requires       'parent';
 requires       'Class::Data::Inheritable';
