@@ -231,7 +231,7 @@ sub _build_regex {
     my $monthday          = "(?:$cardinal_monthday(?:st|nd|rd|th)?)";
 
     my $day_month         = "(?:$monthday\\s*$month)";
-    my $month_day         = "(?:$monthday\\s*$month)";
+    my $month_day         = "(?:$month\\s*$monthday)";
     my $day_month_year    = "(?:(?:$day_month|$month_day)\\s*,\\s*\\d\\d\\d\\d)";
 
     my $yyyymmdd          = "(?:\\d\\d\\d\\d[-/]\\d\\d[-/]\\d\\d)";
