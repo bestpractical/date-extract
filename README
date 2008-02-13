@@ -2,7 +2,7 @@ NAME
     Date::Extract - extract probable dates from strings
 
 VERSION
-    Version 0.01 released 13 Dec 07
+    Version 0.02 released 13 Feb 08
 
 SYNOPSIS
         my $parser = Date::Extract->new();

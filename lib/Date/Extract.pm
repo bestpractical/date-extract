@@ -18,11 +18,11 @@ Date::Extract - extract probable dates from strings
 
 =head1 VERSION
 
-Version 0.01 released 13 Dec 07
+Version 0.02 released 13 Feb 08
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
