@@ -129,7 +129,7 @@ sub new {
     my %args = (
         returns => 'first',
         prefers => 'nearest',
-        time_zone => 'Floating',
+        time_zone => 'floating',
         @_,
     );
 
