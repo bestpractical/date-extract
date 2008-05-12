@@ -1,5 +1,8 @@
 Revision history for Date-Extract
 
+0.03    Mon May 12 09:22:29 EDT 2008
+        Typo fix so the default 'floating' timezone works
+
 0.02    Tue Feb 13 12:59:48 EDT 2008
         month_day regex was backwards, reported and fixed by TSUKAMOTO
 
