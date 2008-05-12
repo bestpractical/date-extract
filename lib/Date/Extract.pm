@@ -171,7 +171,7 @@ sub _combine_args {
     $to->{time_zone} ||= $from->{time_zone};
 }
 
-=head2 extract, ARGS text => C<DateTime>s
+=head2 extract text, ARGS => C<DateTime>s
 
 Takes an arbitrary amount of text and extracts one or more dates from it. The
 return value will be zero or more C<DateTime> objects. If called in scalar
