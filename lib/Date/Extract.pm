@@ -114,7 +114,7 @@ date in the string.
 =item all
 
 Returns all dates found in the string, in the order they were found in the
-strong.
+string.
 
 =item all_cron
 
