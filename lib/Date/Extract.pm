@@ -35,15 +35,16 @@ our $VERSION = '0.03';
 
 There are already a few modules for getting a date out of a string.
 L<DateTime::Format::Natural> should be your first choice. There's also
-L<Time::ParseDate> which fits some very specific formats. Finally, you can
-coerce L<Date::Manip> to do your bidding.
+L<Time::ParseDate> which fits many formats. Finally, you can coerce
+L<Date::Manip> to do your bidding.
 
 But I needed something that will take an arbitrary block of text, search it
 for something that looks like a date string, and build a L<DateTime> object
 out of it. This module fills this niche. By design it will produce few false
 positives. This means it will not catch nearly everything that looks like a
 date string. So if you have the string "do homework for class 2019" it won't
-return a L<DateTime> object with the year set to 2019.
+return a L<DateTime> object with the year set to 2019. This is what your users
+would probably expect.
 
 =head1 METHODS
 
@@ -55,8 +56,8 @@ return a L<DateTime> object with the year set to 2019.
 
 =item time_zone
 
-Forces a particular time zone to be set (this actually matters, as "Tuesday"
-on Monday at 11 PM means something different than "Tuesday" on Tuesday at 1
+Forces a particular time zone to be set (this actually matters, as "tomorrow"
+on Monday at 11 PM means something different than "tomorrow" on Tuesday at 1
 AM).
 
 By default it will use the "floating" time zone. See the documentation for
@@ -153,12 +154,8 @@ sub new {
     return $self;
 }
 
-=for subclasses
-
-This method will combine the arguments of parser->new and extract. Modify the
-"to" hash directly.
-
-=cut
+# This method will combine the arguments of parser->new and extract. Modify the
+# "to" hash directly.
 
 sub _combine_args {
     shift;
@@ -179,7 +176,7 @@ context, only one will be returned, even if the C<returns> argument specifies
 multiple possible return values.
 
 See the documentation of C<new> for the configuration of this method. Any
-arguments passed into this method will trump those from the parser.
+arguments passed into this method will trump those from the constructor.
 
 You may reuse a parser for multiple calls to C<extract>.
 
@@ -194,7 +191,8 @@ sub extract {
     my %args = @_;
 
     # combine the arguments of parser->new and this
-    # don't do this if called as a class method
+    # don't do this if called as a class method,
+    # since there was no constructor call
     $self->_combine_args($self, \%args)
         if ref($self);
 
