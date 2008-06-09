@@ -123,6 +123,8 @@ Returns all dates found in the string, in chronological order.
 
 =back
 
+=back
+
 =cut
 
 sub new {
@@ -336,21 +338,21 @@ sub _extract {
 
 =over 4
 
-=item today; tomorrow; yesterday
+=item * today; tomorrow; yesterday
 
-=item last Friday; next Monday; previous Sat
+=item * last Friday; next Monday; previous Sat
 
-=item Monday; Mon
+=item * Monday; Mon
 
-=item November 13th, 1986; Nov 13, 1986
+=item * November 13th, 1986; Nov 13, 1986
 
-=item November 13th; Nov 13
+=item * November 13th; Nov 13
 
-=item 13 Nov; 13th November
+=item * 13 Nov; 13th November
 
-=item 1986/11/13; 1986-11-13
+=item * 1986/11/13; 1986-11-13
 
-=item 11-13-86; 11/13/1986
+=item * 11-13-86; 11/13/1986
 
 =back
 
