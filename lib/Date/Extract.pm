@@ -192,11 +192,12 @@ sub extract {
     my $text = shift;
     my %args = @_;
 
+    # using extract as a class method
+    $self = $self->new
+        if !ref($self);
+
     # combine the arguments of parser->new and this
-    # don't do this if called as a class method,
-    # since there was no constructor call
-    $self->_combine_args($self, \%args)
-        if ref($self);
+    $self->_combine_args($self, \%args);
 
     # when in scalar context, downgrade
     $args{returns} = $self->_downgrade($args{returns})
