@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More;
+use Test::More skip_all => "not finished yet";
 use Date::Extract;
 
 my %formats = (
