@@ -1,11 +1,16 @@
 Revision history for Date-Extract
 
-0.03    Mon May 12 09:22:29 EDT 2008
+0.04    Wed Nov 18 19:49:23 2009
+        Improve Date::Extract->extract default handling
+        Documentation improvements
+        Repackaging fixes
+
+0.03    Mon May 12 09:22:29 2008
         Typo fix so the default 'floating' timezone works
 
-0.02    Tue Feb 13 12:59:48 EDT 2008
+0.02    Tue Feb 13 12:59:48 2008
         month_day regex was backwards, reported and fixed by TSUKAMOTO
 
-0.01    Thu Dec 13 01:29:12 EDT 2007
+0.01    Thu Dec 13 01:29:12 2007
         First version, released on an unsuspecting world.
 
