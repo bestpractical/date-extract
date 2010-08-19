@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More skip_all => "not finished yet";
+use Test::More;
 use Date::Extract;
 
 my %formats = (
@@ -21,15 +21,17 @@ my %formats = (
             is($_->day_name, 'Monday', "next Monday");
             cmp_ok($_->epoch, '>', DateTime->today->epoch, "next Monday");
         },
-    'previous Sat' =>
-        sub {
+    'previous Sat' => {
+        TODO => 'Not handled by us or DTFN yet',
+        test => sub {
             is($_->day_name, 'Saturday', "previous Sat");
             cmp_ok($_->epoch, '<', DateTime->today->epoch, "previous Sat");
         },
+    },
     'Monday' =>
-        sub { is($_->day_name, 'Monday', "previous Sat") },
+        sub { is($_->day_name, 'Monday', "Monday") },
     'Mon' =>
-        sub { is($_->day_name, 'Mon', "previous Sat") },
+        sub { is($_->day_name, 'Monday', "Mon") },
     'November 13th, 1986' =>
         sub { is($_->ymd, '1986-11-13', "November 13th, 1986") },
     'Nov 13, 1986' =>
@@ -46,25 +48,36 @@ my %formats = (
         sub { is($_->ymd, '1986-11-13', "1986/11/13") },
     '1986-11-13' =>
         sub { is($_->ymd, '1986-11-13', "1986-11-13") },
-    '11-13-86' =>
-        sub { is($_->ymd, '1986-11-13', "11-13-86") },
-    '11/13/1986' =>
-        sub { is($_->ymd, '1986-11-13', "11/13/1986") },
+    '11-13-86' => {
+        TODO => 'Not handled by us or DTFN yet',
+        test => sub { is($_->ymd, '1986-11-13', "11-13-86") },
+    },
+    '11/13/1986' => {
+        TODO => 'Not handled by us or DTFN yet',
+        test => sub { is($_->ymd, '1986-11-13', "11/13/1986") },
+    },
 );
 
-plan tests => 3 + 2 * keys(%formats);
+plan tests => 2 + 2 * keys(%formats);
 
 while (my ($input, $checker) = each %formats) {
-    my $got = Date::Extract->extract($input);
-    ok($got, "got a date out of $input");
+    $checker = { test => $checker }
+        if ref $checker eq 'CODE';
 
-    unless ($got) {
-        fail("No date parsed, so no use running the checker");
-        next;
+    TODO: {
+        local $TODO = $checker->{'TODO'} if $checker->{'TODO'};
+
+        my $got = Date::Extract->extract($input);
+        ok($got, "got a date out of $input");
+
+        unless ($got) {
+            fail("No date parsed, so no use running the checker");
+            next;
+        }
+
+        local $_ = $got;
+        local $Test::Builder::Level = $Test::Builder::Level + 1;
+        $checker->{'test'}->();
     }
-
-    local $_ = $got;
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-    $checker->();
 }
 
