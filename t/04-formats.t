@@ -34,6 +34,8 @@ my %formats = (
         sub { is($_->day_name, 'Monday', "Mon") },
     'November 13th, 1986' =>
         sub { is($_->ymd, '1986-11-13', "November 13th, 1986") },
+    '13 November 1986' =>
+        sub { is($_->ymd, '1986-11-13', "13 November 1986") },
     'Nov 13, 1986' =>
         sub { is($_->ymd, '1986-11-13', "Nov 13th, 1986") },
     'November 13th' =>

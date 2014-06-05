@@ -103,7 +103,7 @@ sub _build_regex {
 
     my $day_month         = "(?:$monthday\\s*$month)";
     my $month_day         = "(?:$month\\s*$monthday)";
-    my $day_month_year    = "(?:(?:$day_month|$month_day)\\s*,\\s*\\d\\d\\d\\d)";
+    my $day_month_year    = "(?:(?:$day_month|$month_day)\\s*,?\\s*\\d\\d\\d\\d)";
 
     my $yyyymmdd          = "(?:\\d\\d\\d\\d[-/]\\d\\d[-/]\\d\\d)";
     my $ddmmyy            = "(?:\\d\\d[-/]\\d\\d[-/]\\d\\d)";
