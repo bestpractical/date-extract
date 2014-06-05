@@ -1,5 +1,10 @@
 Revision history for Date-Extract
 
+0.05    Thu Jun  5 12:52:12 WIB 2014
+        This release is done by SHARYANTO
+        Add 'format' argument (RT#95998)
+        Support '13 Nov 1986' format (RT#95999)
+
 0.04    Wed Nov 18 19:49:23 2009
         Improve Date::Extract->extract default handling
         Documentation improvements
