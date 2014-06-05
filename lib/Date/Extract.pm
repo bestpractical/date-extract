@@ -103,7 +103,7 @@ sub _build_regex {
 
     my $day_month         = "(?:$monthday\\s*$month)";
     my $month_day         = "(?:$month\\s*$monthday)";
-    my $day_month_year    = "(?:(?:$day_month|$month_day)\\s*,\\s*\\d\\d\\d\\d)";
+    my $day_month_year    = "(?:(?:$day_month|$month_day)\\s*,?\\s*\\d\\d\\d\\d)";
 
     my $yyyymmdd          = "(?:\\d\\d\\d\\d[-/]\\d\\d[-/]\\d\\d)";
     my $ddmmyy            = "(?:\\d\\d[-/]\\d\\d[-/]\\d\\d)";
@@ -340,6 +340,8 @@ method. Just C<< Date::Extract->extract($foo) >> will work.
 =item * Monday; Mon
 
 =item * November 13th, 1986; Nov 13, 1986
+
+=item * 13 November 1986; 13 Nov 1986
 
 =item * November 13th; Nov 13
 
