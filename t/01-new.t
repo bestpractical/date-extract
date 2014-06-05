@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 26;
+use Test::More tests => 35;
 use Date::Extract;
 
 my $parser = Date::Extract->new();
@@ -35,3 +35,15 @@ like($@, qr/01-new\.t/, "invalid `prefers` error reported from caller's perspect
 
 # }}}
 
+# format {{{
+$parser = eval { Date::Extract->new(format => "invalid argument") };
+ok(!$parser, "did NOT get a parser out of Date::Extract->new(format => 'invalid argument')");
+like($@, qr/Invalid `format` passed to constructor/, "(format => 'invalid argument') gave a sensible error message");
+like($@, qr/01-new\.t/, "invalid `format` error reported from caller's perspective");
+
+for my $opt (qw/DateTime verbatim epoch/) {
+    $parser = Date::Extract->new(format => $opt);
+    ok($parser, "got a parser out of Date::Extract->new(format => '$opt')");
+    ok($parser->isa("Date::Extract"), "new parser is a Date::Extract object");
+}
+# }}}

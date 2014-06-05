@@ -17,11 +17,18 @@ sub _croak {
 sub new {
     my $class = shift;
     my %args = (
+        format => 'DateTime',
         returns => 'first',
         prefers => 'nearest',
         time_zone => 'floating',
         @_,
     );
+
+    if ($args{format} ne 'DateTime'
+     && $args{format} ne 'verbatim'
+     && $args{format} ne 'epoch') {
+        _croak "Invalid `format` passed to constructor: expected `DateTime', `verbatim', `epoch'.";
+    }
 
     if ($args{returns} ne 'first'
      && $args{returns} ne 'last'
@@ -52,6 +59,7 @@ sub _combine_args {
     my $from = shift;
     my $to = shift;
 
+    $to->{format}    ||= $from->{format};
     $to->{prefers}   ||= $from->{prefers};
     $to->{returns}   ||= $from->{returns};
     $to->{time_zone} ||= $from->{time_zone};
@@ -189,6 +197,8 @@ sub _extract {
     my $regex = $self->regex || $self->_build_regex;
     my @gleaned = $text =~ /$regex/g;
 
+    return @gleaned if $self->{format} eq 'verbatim';
+
     my %dtfn_args;
     $dtfn_args{prefer_future} = 1
         if $args{prefers} && $args{prefers} eq 'future';
@@ -202,6 +212,9 @@ sub _extract {
             if $parser->success;
     }
 
+    if ($self->{format} eq 'epoch') {
+        return map { $_->epoch } @ret;
+    }
     return @ret;
 }
 
@@ -227,13 +240,12 @@ L<DateTime::Format::Natural> should be your first choice. There's also
 L<Time::ParseDate> which fits many formats. Finally, you can coerce
 L<Date::Manip> to do your bidding.
 
-But I needed something that will take an arbitrary block of text, search it
-for something that looks like a date string, and build a L<DateTime> object
-out of it. This module fills this niche. By design it will produce few false
-positives. This means it will not catch nearly everything that looks like a
-date string. So if you have the string "do homework for class 2019" it won't
-return a L<DateTime> object with the year set to 2019. This is what your users
-would probably expect.
+But I needed something that will take an arbitrary block of text, search it for
+something that looks like a date string, and extract it. This module fills this
+niche. By design it will produce few false positives. This means it will not
+catch nearly everything that looks like a date string. So if you have the string
+"do homework for class 2019" it won't return a L<DateTime> object with the year
+set to 2019. This is what your users would probably expect.
 
 =head1 METHODS
 
@@ -243,7 +255,15 @@ would probably expect.
 
 =over 4
 
+=item format
+
+Choose what format the extracted date(s) will be. The default is "DateTime",
+which will return L<DateTime> object(s). Other option include "verbatim" (return
+the original text), or "epoch" (return Unix timestamp).
+
 =item time_zone
+
+Only relevant when C,format> is set to "DateTime".
 
 Forces a particular time zone to be set (this actually matters, as "tomorrow"
 on Monday at 11 PM means something different than "tomorrow" on Tuesday at 1
@@ -314,10 +334,11 @@ Returns all dates found in the string, in chronological order.
 
 =back
 
-=head2 extract text, ARGS => C<DateTime>s
+=head2 extract text, ARGS => dates
 
 Takes an arbitrary amount of text and extracts one or more dates from it. The
-return value will be zero or more C<DateTime> objects. If called in scalar
+return value will be zero or more dates, which by default are L<DateTime>
+objects (but can be customized with the C<format> argument). If called in scalar
 context, only one will be returned, even if the C<returns> argument specifies
 multiple possible return values.
 
