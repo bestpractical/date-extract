@@ -263,7 +263,7 @@ the original text), or "epoch" (return Unix timestamp).
 
 =item time_zone
 
-Only relevant when C,format> is set to "DateTime".
+Only relevant when C<format> is set to "DateTime".
 
 Forces a particular time zone to be set (this actually matters, as "tomorrow"
 on Monday at 11 PM means something different than "tomorrow" on Tuesday at 1
