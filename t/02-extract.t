@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Test::More tests => 50;
-use Test::MockTime 'set_fixed_time';
+use Test::MockTime::HiRes 'set_fixed_time';
 use Date::Extract;
 
 # a Friday. The time I wrote this line of code, in fact (in UTC)
