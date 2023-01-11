@@ -1,9 +1,11 @@
 # Load the Module::Install bundled in ./inc/
+use lib '.';
 use inc::Module::Install;
 
 # Define metadata
 name           'Date-Extract';
 all_from       'lib/Date/Extract.pm';
+readme_from    'lib/Date/Extract.pm';
 
 requires       'List::Util';
 requires       'Carp';

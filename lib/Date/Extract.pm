@@ -5,7 +5,7 @@ use DateTime::Format::Natural;
 use List::Util 'reduce';
 use parent 'Class::Data::Inheritable';
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 __PACKAGE__->mk_classdata($_) for qw/scalar_downgrade handlers regex/;
 
@@ -385,7 +385,8 @@ L<DateTime::Format::Natural>, L<Time::ParseDate>, L<Date::Manip>
 
 =head1 AUTHOR
 
-Shawn M Moore, C<< <sartak at bestpractical dot com> >>
+Shawn M Moore
+Best Practical Solutions <modules@bestpractical.com>
 
 =head1 ACKNOWLEDGEMENTS
 
